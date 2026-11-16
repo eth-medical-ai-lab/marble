@@ -1,0 +1,16 @@
+# Core
+numpy==2.2.0
+tqdm==4.67.1
+gymnasium==1.2.3
+Pillow==12.1.0
+python-dotenv==1.2.1
+
+# OpenAI-compatible API backends
+openai==2.26.0
+
+# Rendering
+cairosvg==2.8.2
+matplotlib==3.10.8
+
+# Canonical dataset downloads
+huggingface-hub==1.6.0

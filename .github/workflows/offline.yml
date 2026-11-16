@@ -1,0 +1,43 @@
+name: Offline checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      MPLBACKEND: Agg
+      HF_HUB_OFFLINE: "1"
+      OPENAI_API_KEY: offline-test
+      OPENAI_BASE_URL: http://127.0.0.1:1/v1
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Cairo and Python dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2
+          python -m pip install -r requirements.txt
+          python -m pip check
+      - name: Check syntax and command-line entry points
+        run: |
+          python -m compileall -q eval.py generate.py src
+          python -B eval.py --help
+          python -B generate.py --help
+          for task in cube maze blox; do
+            for mode in planning perception; do
+              python -B eval.py --task "$task" --mode "$mode" --help
+            done
+          done
